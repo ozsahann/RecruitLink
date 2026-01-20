@@ -1,148 +1,122 @@
-/* Ana Panel Konumlandırması */
+/* Ana Panel - Esnek Yapı */
 #yale3_slider {
     position: fixed !important;
-    z-index: 2147483647 !important; /* En üstte görünmesi için maksimum değer */
+    z-index: 2147483647 !important; 
     top: 0 !important;
-    right: 0 !important; /* Sağda sabitler */
-    width: 0; /* Başlangıçta kapalı */
+    right: 0 !important; 
+    width: 0; 
     height: 100vh !important;
     background-color: #f8fafc;
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
-    overflow-x: hidden; /* Genişlik 0 iken içeriğin taşmasını engeller */
+    overflow-y: auto; /* İçerik taşarsa panelin tamamı scroll edilebilir */
+    overflow-x: hidden;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
     font-family: 'Segoe UI', system-ui, sans-serif;
-    display: block !important;
-    padding-bottom: 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
-/* Header Tasarımı */
+/* Header */
 #sheader {
     background: linear-gradient(135deg, #f97316 0%, #FE6601 100%);
-    padding: 12px 20px;
+    padding: 12px 15px;
     color: white;
     text-align: center;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1); 
+    flex-shrink: 0;
 }
 
-/* Başlık Metni */
 #apptitle {
-    font-size: 20px; 
+    font-size: 18px;
     font-weight: 800;
-    margin-bottom: 2px;
 }
 
-#apptitle_caption {
-    font-size: 10px;
-    letter-spacing: 0.5px;
+/* Ana Görünüm */
+#main_view {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important; /* Alt taraftaki logout butonunu aşağı itmek için gerekli */
+    min-height: 0;
 }
 
-/* Profil Özeti Kartı */
+/* Profil Özeti - İsim Alanı */
 #profile_summary {
-    margin-top: 20px;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.1);
+    margin: 12px 15px;
+    padding: 10px;
+    background: #ffffff !important;
     border-radius: 8px;
-    display: inline-flex; 
-    align-items: center;
-    gap: 10px;
-    min-width: 80%; 
-    justify-content: center;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+    border-bottom: 3px solid #FE6601;
+    flex-shrink: 0;
 }
 
 #name_title {
-    font-weight: 600;
-    color: white !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
 }
 
-/* Veri Kartları */
+/* Veri Kartları - Eşit Boyut İptal Edildi */
 .data-card {
     background: white;
-    margin: 15px;
-    padding: 15px;
-    border-radius: 12px;
+    margin: 6px 15px; 
+    padding: 12px;
+    border-radius: 10px;
     border: 1px solid #e2e8f0;
+    display: block; /* Eşit yükseklik zorlamasını kaldırır */
 }
 
 .data-card label {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: #475569;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
+/* Textarea - Sabit Yükseklik */
 #yale3_slider textarea {
     width: 100%;
-    min-height: 80px;
+    height: 80px; /* Kutuların yüksekliği tekrar sabitlendi */
     border: 1px solid #cbd5e1;
     border-radius: 6px;
-    padding: 10px;
-    font-size: 13px;
+    padding: 8px;
+    font-size: 12px;
     background: #fdfdfd;
-    color: #1e293b;
-    resize: vertical;
-    box-sizing: border-box; /* Padding'in genişliği bozmamasını sağlar */
+    box-sizing: border-box;
+    resize: vertical; /* Kullanıcı isterse büyütebilir */
 }
 
-/* Alt kısım (Footer) Konteynırı */
-#sfooter {
-    position: sticky;
-    bottom: 20px; 
-    background: white;
-    margin: 10px 15px 25px 15px; 
-    padding: 20px;
-    border: 1px solid #e2e8f0; 
-    border-radius: 12px; 
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    gap: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); 
-    z-index: 10;
-}
-
-/* Kayıt Seçeneği (Dropdown) Konteynırı */
-.select-container {
-    width: 90%; 
-    display: flex;
-    justify-content: center;
-}
-
-.modern-select {
+/* Pozisyon Seç Input ve Select */
+.modern-input, select.modern-select {
     width: 100%;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 8px 10px !important;
+    height: 36px !important;
+    margin-bottom: 8px !important;
+    font-size: 12px !important;
+    box-sizing: border-box;
     border: 1px solid #cbd5e1;
-    background: #f8fafc;
-    font-size: 13px;
-    cursor: pointer;
-    text-align: center;
+    border-radius: 6px;
 }
 
-/* Buton Grubu */
+/* Buton Grubu - Kartın Hemen Altında */
 .action-group {
+    padding: 10px 15px;
     display: flex;
-    justify-content: center; 
-    gap: 12px;
-    width: 100%;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
-/* Butonların Ortak Stili */
 .primary-btn, .secondary-btn {
-    flex: 0 1 140px; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    border-radius: 8px;
+    flex: 1;
+    padding: 10px !important;
+    border-radius: 6px;
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.2s;
 }
 
 .primary-btn {
@@ -151,49 +125,25 @@
     border: none;
 }
 
+.primary-btn:hover { background: #e55c01; }
+
 .secondary-btn {
     background: #f1f5f9;
     color: #475569 !important;
     border: 1px solid #cbd5e1;
 }
-/* Modern Select ve Date Input Stili */
-input[type="date"], select.modern-select {
-    width: 100%; /* Genişliği tam yapar */
-    padding: 10px 12px; /* İç boşluğu artırarak metnin sıkışmasını önler */
-    margin-bottom: 15px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 14px; /* Yazı boyutunu okunabilir yapar */
-    color: #334155;
-    background-color: #f8fafc;
-    transition: all 0.2s ease;
-    height: 42px; /* Yüksekliği sabitleyerek daha geniş bir alan sağlar */
-    box-sizing: border-box; /* Padding'in taşmasını engeller */
-}
 
-/* Hover ve Focus Durumu */
-input[type="date"]:hover, select.modern-select:hover {
-    border-color: #94a3b8;
-}
+.secondary-btn:hover { background: #e2e8f0; }
 
-input[type="date"]:focus, select.modern-select:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-.modern-input {
+/* Oturumu Kapat - Her Zaman En Altta */
+#logout_button {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 11px;
+    cursor: pointer;
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 13px;
-    background-color: #ffffff;
-    color: #1e293b;
-    box-sizing: border-box;
-}
-
-.modern-input:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    padding: 15px 0;
+    margin-top: auto; /* Üstteki her şeyi yukarı iterek en alta yerleşir */
+    flex-shrink: 0;
 }
