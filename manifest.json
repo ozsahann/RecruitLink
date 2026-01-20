@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "RecruitFlow",
+    "name": "RecruitLink",
     "version": "3.0.0",
     "description": "Smart LinkedIn Candidate Sourcing Tool",
     "icons": {
@@ -23,7 +23,7 @@
         "service_worker": "scripts/events.js"
     },
     "action": {
-        "default_title": "RecruitFlow"
+        "default_title": "RecruitLink"
     },
     "content_scripts": [
         {
