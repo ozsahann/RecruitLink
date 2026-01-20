@@ -32,7 +32,7 @@
 
 /* Görünüm Alanları */
 #main_view {
-    display: none; /* JS tarafından flex yapılacak */
+    display: none;
     flex-direction: column;
     flex: 1;
     height: 100%;
@@ -40,7 +40,7 @@
 }
 
 #login_view {
-    display: none; /* JS tarafından block yapılacak */
+    display: none;
     padding: 20px;
 }
 

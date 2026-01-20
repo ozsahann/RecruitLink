@@ -22,12 +22,10 @@ async function checkAuthAndRender() {
         const mainView = document.getElementById("main_view");
         
         if (result.api_token) {
-            // Giriş yapılmış: Login Gizle, Ana Paneli Göster (Flex ile)
             if(loginView) loginView.style.setProperty('display', 'none', 'important');
             if(mainView) mainView.style.setProperty('display', 'flex', 'important');
             refreshSliderData(); 
         } else {
-            // Giriş yok: Ana Paneli Gizle, Login Göster
             if(loginView) loginView.style.setProperty('display', 'block', 'important');
             if(mainView) mainView.style.setProperty('display', 'none', 'important');
             clearSliderFields(); 
@@ -35,8 +33,9 @@ async function checkAuthAndRender() {
     });
 }
 
-// VERİLERİ TEMİZLEME
+// VERİLERİ VE GİRİŞ DURUMUNU TEMİZLEME
 function clearSliderFields() {
+    // Aday Bilgilerini Temizle
     const nameTitle = document.getElementById("name_title");
     if(nameTitle) nameTitle.textContent = "Aday Bekleniyor...";
     
@@ -45,6 +44,13 @@ function clearSliderFields() {
     
     const select = document.getElementById("position_select");
     if (select) select.innerHTML = "<option value=''>Yükleniyor...</option>";
+
+    // ✅ Giriş Formunu Düzenle
+    const passwordInput = document.getElementById("login_password");
+    if (passwordInput) passwordInput.value = ""; // Şifreyi sil
+
+    const loginBtn = document.getElementById("do_login_button");
+    if (loginBtn) loginBtn.innerText = "Giriş Yap"; // Kum saatini kaldır
 }
 
 // OKUNABİLİR METİN FORMATI
@@ -62,7 +68,7 @@ function simplifyText(data, type) {
 // VERİLERİ YENİLEME
 async function refreshSliderData() {
     chrome.storage.local.get(["api_token"], (result) => {
-        if (!result.api_token) return; // Token yoksa veri çekme
+        if (!result.api_token) return;
 
         const basic = getBasicProfileSection();
         const exp = getExperienceSection();
