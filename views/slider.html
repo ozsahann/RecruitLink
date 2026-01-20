@@ -1,0 +1,48 @@
+<div id="sheader">
+    <div class="logo-area">
+        <span id="apptitle">RecruitLink</span>
+    </div>
+</div>
+
+<div id="login_view" style="display: none; padding: 20px;">
+    <div class="data-card">
+        <label>📧 E-posta</label>
+        <input type="email" id="login_email" class="modern-input" placeholder="ornek@mail.com">
+        <label style="margin-top:10px;">🔑 Şifre</label>
+        <input type="password" id="login_password" class="modern-input" placeholder="******">
+        <button id="do_login_button" class="primary-btn" style="width:100%; margin-top:20px;">Giriş Yap</button>
+        <p id="login_error" style="color:red; font-size:12px; margin-top:10px; display:none; text-align:center;"></p>
+    </div>
+</div>
+
+<div id="main_view" style="display: none;">
+    <div id="profile_summary" style="margin: 15px; padding: 12px; background: rgba(254, 102, 1, 0.1); border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+        <div class="profile-icon">👤</div>
+        <span id="name_title" style="font-weight: 600; color: #1e293b;">Aday İsmi...</span>
+    </div>
+
+    <div id="sbodycontainer">
+        <div class="data-card">
+            <label><i class="icon">ℹ️</i> Temel Bilgiler</label>
+            <textarea id="basicprofile" placeholder="Profil verileri..."></textarea>
+        </div>
+        <div class="data-card">
+            <label><i class="icon">💼</i> İş Deneyimi</label>
+            <textarea id="experiencetext" placeholder="Deneyimler..."></textarea>
+        </div>
+    </div>
+
+    <div class="data-card">
+        <label>🎯 Pozisyon Seç</label>
+        <input type="text" id="position_search" class="modern-input" placeholder="Pozisyon ara..." style="margin-bottom: 8px;">
+        <select id="position_select" class="modern-select" style="width: 100%;">
+            <option value="">Yükleniyor...</option>
+        </select>
+    </div>
+    
+    <div class="action-group" style="padding: 15px; display: flex; gap: 10px;">
+        <button id="refresh_profile_data_button" class="secondary-btn" style="flex:1;">Yenile</button>
+        <button id="save_profile_data_button" class="primary-btn" style="flex:1;">Sisteme Kaydet</button>
+    </div>
+    <button id="logout_button" style="background:none; border:none; color:#94a3b8; font-size:11px; cursor:pointer; width:100%; margin-top:10px;">Oturumu Kapat</button>
+</div>
