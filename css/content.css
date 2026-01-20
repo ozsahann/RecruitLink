@@ -1,4 +1,4 @@
-/* Ana Panel - Esnek Yapı */
+/* Ana Panel Konumlandırması */
 #yale3_slider {
     position: fixed !important;
     z-index: 2147483647 !important; 
@@ -8,7 +8,7 @@
     height: 100vh !important;
     background-color: #f8fafc;
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto; /* İçerik taşarsa panelin tamamı scroll edilebilir */
+    overflow-y: auto;
     overflow-x: hidden;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
     font-family: 'Segoe UI', system-ui, sans-serif;
@@ -16,7 +16,7 @@
     flex-direction: column !important;
 }
 
-/* Header */
+/* Header Tasarımı */
 #sheader {
     background: linear-gradient(135deg, #f97316 0%, #FE6601 100%);
     padding: 12px 15px;
@@ -30,15 +30,21 @@
     font-weight: 800;
 }
 
-/* Ana Görünüm */
+/* Görünüm Alanları */
 #main_view {
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important; /* Alt taraftaki logout butonunu aşağı itmek için gerekli */
+    display: none; /* JS tarafından flex yapılacak */
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
     min-height: 0;
 }
 
-/* Profil Özeti - İsim Alanı */
+#login_view {
+    display: none; /* JS tarafından block yapılacak */
+    padding: 20px;
+}
+
+/* Profil Özeti */
 #profile_summary {
     margin: 12px 15px;
     padding: 10px;
@@ -56,14 +62,13 @@
     color: #1e293b !important;
 }
 
-/* Veri Kartları - Eşit Boyut İptal Edildi */
+/* Veri Kartları */
 .data-card {
     background: white;
     margin: 6px 15px; 
     padding: 12px;
     border-radius: 10px;
     border: 1px solid #e2e8f0;
-    display: block; /* Eşit yükseklik zorlamasını kaldırır */
 }
 
 .data-card label {
@@ -76,20 +81,20 @@
     gap: 6px;
 }
 
-/* Textarea - Sabit Yükseklik */
+/* Textarea */
 #yale3_slider textarea {
     width: 100%;
-    height: 80px; /* Kutuların yüksekliği tekrar sabitlendi */
+    height: 80px;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     padding: 8px;
     font-size: 12px;
     background: #fdfdfd;
     box-sizing: border-box;
-    resize: vertical; /* Kullanıcı isterse büyütebilir */
+    resize: vertical;
 }
 
-/* Pozisyon Seç Input ve Select */
+/* Input ve Select */
 .modern-input, select.modern-select {
     width: 100%;
     padding: 8px 10px !important;
@@ -101,7 +106,7 @@
     border-radius: 6px;
 }
 
-/* Buton Grubu - Kartın Hemen Altında */
+/* Butonlar */
 .action-group {
     padding: 10px 15px;
     display: flex;
@@ -116,7 +121,6 @@
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
-    transition: background 0.2s;
 }
 
 .primary-btn {
@@ -125,17 +129,13 @@
     border: none;
 }
 
-.primary-btn:hover { background: #e55c01; }
-
 .secondary-btn {
     background: #f1f5f9;
     color: #475569 !important;
     border: 1px solid #cbd5e1;
 }
 
-.secondary-btn:hover { background: #e2e8f0; }
-
-/* Oturumu Kapat - Her Zaman En Altta */
+/* Oturumu Kapat */
 #logout_button {
     background: none;
     border: none;
@@ -144,6 +144,6 @@
     cursor: pointer;
     width: 100%;
     padding: 15px 0;
-    margin-top: auto; /* Üstteki her şeyi yukarı iterek en alta yerleşir */
+    margin-top: auto;
     flex-shrink: 0;
 }

@@ -3,59 +3,105 @@
 let allPositions = [];
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// SLIDER AÇMA KAPAMA DİNLEYİCİSİ
+// SLIDER AÇMA KAPAMA
 chrome.runtime.onMessage.addListener((msg) => {
     if (msg.todo === "toggle") {
         const slider = document.getElementById("yale3_slider");
         if (slider) {
             const currentWidth = window.getComputedStyle(slider).width;
             slider.style.width = (currentWidth === "0px" || slider.style.width === "0px") ? "450px" : "0px";
-            // Her açıldığında oturumu kontrol et
             if (slider.style.width === "450px") checkAuthAndRender();
         }
     }
 });
 
+// OTURUM KONTROLÜ VE EKRAN GEÇİŞİ
 async function checkAuthAndRender() {
     chrome.storage.local.get(["api_token"], (result) => {
         const loginView = document.getElementById("login_view");
         const mainView = document.getElementById("main_view");
         
         if (result.api_token) {
-            if(loginView) loginView.style.display = "none";
-            if(mainView) mainView.style.display = "block";
-            setTimeout(refreshSliderData, 500);
+            // Giriş yapılmış: Login Gizle, Ana Paneli Göster (Flex ile)
+            if(loginView) loginView.style.setProperty('display', 'none', 'important');
+            if(mainView) mainView.style.setProperty('display', 'flex', 'important');
+            refreshSliderData(); 
         } else {
-            if(loginView) loginView.style.display = "block";
-            if(mainView) mainView.style.display = "none";
+            // Giriş yok: Ana Paneli Gizle, Login Göster
+            if(loginView) loginView.style.setProperty('display', 'block', 'important');
+            if(mainView) mainView.style.setProperty('display', 'none', 'important');
+            clearSliderFields(); 
         }
     });
 }
 
-function initEventListeners() {
-    // Login Butonu
-    const loginBtn = document.getElementById("do_login_button");
-    if (loginBtn) {
-        loginBtn.onclick = () => {
-            const userInput = document.getElementById("login_email").value;
-            const passInput = document.getElementById("login_password").value;
-            const errorLabel = document.getElementById("login_error");
+// VERİLERİ TEMİZLEME
+function clearSliderFields() {
+    const nameTitle = document.getElementById("name_title");
+    if(nameTitle) nameTitle.textContent = "Aday Bekleniyor...";
+    
+    injectDataintoTextArea("basicprofile", "");
+    injectDataintoTextArea("experiencetext", "");
+    
+    const select = document.getElementById("position_select");
+    if (select) select.innerHTML = "<option value=''>Yükleniyor...</option>";
+}
 
-            loginBtn.innerText = "⏳...";
-            chrome.runtime.sendMessage({
-                type: "login",
-                payload: { userInfo: userInput, password: passInput }
-            }, (response) => {
-                if (response && response.success) {
-                    checkAuthAndRender();
-                } else {
-                    errorLabel.innerText = response?.error || "Hata!";
-                    errorLabel.style.display = "block";
-                    loginBtn.innerText = "Giriş Yap";
-                }
-            });
-        };
+// OKUNABİLİR METİN FORMATI
+function simplifyText(data, type) {
+    if (!data) return "";
+    if (type === 'basic') {
+        return `İsim: ${data.name || '-'}\nUnvan: ${data.headline || '-'}\nKonum: ${data.location || '-'}\nHakkında: ${data.about || '-'}`;
     }
+    if (type === 'experience' && Array.isArray(data)) {
+        return data.map(exp => `- ${exp.jobTitle}${exp.company ? ' (' + exp.company + ')' : ''}`).join('\n');
+    }
+    return "";
+}
+
+// VERİLERİ YENİLEME
+async function refreshSliderData() {
+    chrome.storage.local.get(["api_token"], (result) => {
+        if (!result.api_token) return; // Token yoksa veri çekme
+
+        const basic = getBasicProfileSection();
+        const exp = getExperienceSection();
+        const nameTitle = document.getElementById("name_title");
+        
+        if(nameTitle) nameTitle.textContent = basic.name || "Aday Bekleniyor...";
+        
+        injectDataintoTextArea("basicprofile", simplifyText(basic, 'basic'));
+        injectDataintoTextArea("experiencetext", simplifyText(exp, 'experience'));
+        
+        loadPositionsIntoDropdown();
+    });
+}
+
+function initEventListeners() {
+    // Login İşlemi
+    document.getElementById("do_login_button")?.addEventListener("click", () => {
+        const userInput = document.getElementById("login_email").value;
+        const passInput = document.getElementById("login_password").value;
+        const btn = document.getElementById("do_login_button");
+
+        btn.innerText = "⏳...";
+        chrome.runtime.sendMessage({
+            type: "login",
+            payload: { userInfo: userInput, password: passInput }
+        }, (response) => {
+            if (response && response.success) {
+                checkAuthAndRender();
+            } else {
+                alert("Hata: " + (response?.error || "Giriş yapılamadı"));
+                btn.innerText = "Giriş Yap";
+            }
+        });
+    });
+
+    // Logout İşlemi
+    document.getElementById("logout_button")?.addEventListener("click", () => {
+        chrome.storage.local.remove("api_token", () => checkAuthAndRender());
+    });
 
     // Arama Kutusu
     const searchInput = document.getElementById("position_search");
@@ -71,23 +117,8 @@ function initEventListeners() {
         };
     }
 
-    document.getElementById("logout_button")?.addEventListener("click", () => {
-        chrome.storage.local.remove("api_token", () => checkAuthAndRender());
-    });
-
     document.getElementById("refresh_profile_data_button")?.addEventListener("click", refreshSliderData);
     document.getElementById("save_profile_data_button")?.addEventListener("click", handleSaveAction);
-}
-
-async function refreshSliderData() {
-    const basic = getBasicProfileSection();
-    const exp = getExperienceSection();
-    const nameTitle = document.getElementById("name_title");
-    if(nameTitle) nameTitle.textContent = basic.name || "Aday Bekleniyor...";
-    
-    injectDataintoTextArea("basicprofile", basic);
-    injectDataintoTextArea("experiencetext", exp);
-    loadPositionsIntoDropdown();
 }
 
 function loadPositionsIntoDropdown() {
@@ -124,7 +155,7 @@ function renderPositions(list) {
 
 async function handleSaveAction() {
     const btn = document.getElementById("save_profile_data_button");
-    btn.innerText = "⏳ Aktarılıyor...";
+    btn.innerText = "⏳...";
     btn.disabled = true;
     
     const basic = getBasicProfileSection();
@@ -142,11 +173,7 @@ async function handleSaveAction() {
 
     chrome.runtime.sendMessage({ type: "downloadProfile", content: JSON.stringify(payload) }, (response) => {
         btn.disabled = false;
-        if (response && response.success) {
-            btn.innerText = "✅ Kaydedildi";
-        } else {
-            btn.innerText = "❌ Hata!";
-        }
+        btn.innerText = response?.success ? "✅ Kaydedildi" : "❌ Hata";
         setTimeout(() => { btn.innerText = "Sisteme Kaydet"; }, 2000);
     });
 }
@@ -165,14 +192,17 @@ function getExperienceSection() {
     const sections = document.querySelectorAll("section[data-view-name='profile-card']");
     const expNode = Array.from(sections).find(sec => sec.querySelector('#experience')) || null;
     if (!expNode) return [];
-    return Array.from(expNode.querySelectorAll('li.artdeco-list__item')).map(li => ({
-        jobTitle: li.querySelector(".t-bold span[aria-hidden='true']")?.textContent.trim() || ""
-    }));
+
+    return Array.from(expNode.querySelectorAll('li.artdeco-list__item')).map(li => {
+        const title = li.querySelector(".t-bold span[aria-hidden='true']")?.textContent.trim() || "";
+        const company = li.querySelector(".t-14.t-normal span[aria-hidden='true']")?.textContent.trim() || "";
+        return { jobTitle: title, company: company.split(' · ')[0] };
+    }).filter(item => item.jobTitle !== "");
 }
 
 function injectDataintoTextArea(id, data) {
     const el = document.getElementById(id);
-    if (el) el.value = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
+    if (el) el.value = data;
 }
 
 async function scrapeContactInfoModal() {
