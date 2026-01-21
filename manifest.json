@@ -17,6 +17,7 @@
     "host_permissions": [
         "https://testpanel.recruitcrafts.com/*",
         "https://www.linkedin.com/*",
+        "https://github.com/*",
         "https://testbackend.recruitcrafts.com/*"
     ],
     "background": {
@@ -27,7 +28,7 @@
     },
     "content_scripts": [
         {
-            "matches": ["https://*.linkedin.com/*"],
+            "matches": ["https://*.linkedin.com/*", "https://github.com/*"],
             "js": ["scripts/selectors.js", "scripts/content.js"],
             "css": ["css/content.css"],
             "type": "module"
