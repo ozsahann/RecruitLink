@@ -30,11 +30,29 @@ async function checkAuthAndRender() {
         } else {
             if(loginView) loginView.style.setProperty('display', 'block', 'important');
             if(mainView) mainView.style.setProperty('display', 'none', 'important');
+            clearSliderFields();
         }
     });
 }
 
-// DENEYİM VERİLERİNİ ÇEKEN FONKSİYON (ESKİ HALİNE GETİRİLDİ)
+function clearSliderFields() {
+    const nameTitle = document.getElementById("name_title");
+    if(nameTitle) nameTitle.textContent = "Aday Bekleniyor...";
+    
+    injectDataintoTextArea("basicprofile", "");
+    injectDataintoTextArea("experiencetext", "");
+    
+    const errorEl = document.getElementById("login_error");
+    if (errorEl) {
+        errorEl.style.display = "none";
+        errorEl.textContent = "";
+    }
+
+    const loginBtn = document.getElementById("do_login_button");
+    if (loginBtn) loginBtn.innerText = "Giriş Yap";
+}
+
+// LİNKEDİN DENEYİM VERİLERİ (ORİJİNAL HALİNE GETİRİLDİ)
 function getExperienceSection() {
     const sections = document.querySelectorAll("section[data-view-name='profile-card']");
     const expNode = Array.from(sections).find(sec => sec.querySelector('#experience')) || null;
@@ -60,7 +78,6 @@ function getBasicProfileSection(site) {
     return data;
 }
 
-// VERİLERİ FORMATLAYAN FONKSİYON (ESKİ HALİNE GETİRİLDİ)
 function simplifyText(data, type) {
     if (!data) return "";
     if (type === 'basic') {
@@ -75,14 +92,11 @@ function simplifyText(data, type) {
 async function refreshSliderData() {
     const site = getCurrentSite();
     const basic = getBasicProfileSection(site);
-    
-    // LinkedIn ise deneyimleri çek, GitHub ise boş bırak
-    const exp = (site === "linkedin") ? getExperienceSection() : [];
+    const exp = (site === "linkedin") ? getExperienceSection() : []; // Deneyimler LinkedIn için çekilir
     
     const nameTitle = document.getElementById("name_title");
     if(nameTitle) nameTitle.textContent = basic.name || "Aday Bekleniyor...";
     
-    // Form alanlarını doldur
     injectDataintoTextArea("basicprofile", simplifyText(basic, 'basic'));
     injectDataintoTextArea("experiencetext", simplifyText(exp, 'experience'));
     
@@ -96,14 +110,21 @@ function loadPositionsIntoDropdown() {
         if (response && response.success) {
             allPositions = response.data?.data || [];
             renderPositions(allPositions);
+        } else {
+            select.innerHTML = "<option>Yüklenemedi</option>";
         }
     });
 }
 
+// POZİSYONLARI LİSTELE (İLK HALİNE GETİRİLDİ VE #ID EKLENDİ)
 function renderPositions(list) {
     const select = document.getElementById("position_select");
     if (!select) return;
     select.innerHTML = "";
+    if (list.length === 0) {
+        select.innerHTML = "<option value=''>Sonuç bulunamadı</option>";
+        return;
+    }
     list.forEach(item => {
         const pos = item.companyPosition || item;
         if (pos && pos.id) {
@@ -147,19 +168,38 @@ async function handleSaveAction() {
 }
 
 function initEventListeners() {
+    // LOGIN İŞLEMİ
     document.getElementById("do_login_button")?.addEventListener("click", () => {
         const email = document.getElementById("login_email").value;
         const pass = document.getElementById("login_password").value;
-        chrome.runtime.sendMessage({ type: "login", payload: { userInfo: email, password: pass } }, (res) => {
-            if(res.success) checkAuthAndRender();
+        const btn = document.getElementById("do_login_button");
+        const errorEl = document.getElementById("login_error");
+
+        if (errorEl) errorEl.style.display = "none";
+        btn.innerText = "⏳...";
+
+        chrome.runtime.sendMessage({ 
+            type: "login", 
+            payload: { userInfo: email, password: pass } 
+        }, (res) => { 
+            if (res.success) {
+                checkAuthAndRender();
+            } else {
+                if (errorEl) {
+                    errorEl.textContent = "Hatalı giriş bilgileri";
+                    errorEl.style.display = "block";
+                }
+                btn.innerText = "Giriş Yap";
+            }
         });
     });
 
+    // LOGOUT İŞLEMİ
     document.getElementById("logout_button")?.addEventListener("click", () => {
         chrome.storage.local.remove("api_token", () => checkAuthAndRender());
     });
 
-    // ARAMA KUTUSU
+    // ARAMA KUTUSU (ORİJİNAL HALİNE GETİRİLDİ)
     const searchInput = document.getElementById("position_search");
     if (searchInput) {
         searchInput.oninput = (e) => {
@@ -182,6 +222,7 @@ function injectDataintoTextArea(id, data) {
     if (el) el.value = data;
 }
 
+// SLIDER YÜKLEME
 if (!document.getElementById("yale3_slider")) {
     const sliderContainer = document.createElement("div");
     sliderContainer.id = "yale3_slider";
